@@ -1,0 +1,25 @@
+name: Update jobs.json
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+jobs:
+  update-jobs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Fetch jobs feed
+        run: |
+         curl -s "${{ vars.JOBS_FEED_URL }}" -o jobs.json
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Commit and push changes
+        run: |
+          if ! git diff --quiet jobs.json; then
+            git add jobs.json
+            git commit -m "Update jobs.json"
+            git push
+          fi
