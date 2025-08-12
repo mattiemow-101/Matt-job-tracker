@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -47,76 +46,87 @@
       <div style="flex:1 1 auto;min-width:240px">
         <h1 style="margin:0 0 6px 0;font-size:22px">Matt — Battery & Electrode Job Tracker</h1>
         <div class="muted" style="font-size:13px">Static single‑file. Import JSON/CSV or point to a JSON endpoint. Saves locally.</div>
+        <div class="muted" style="font-size:12px;margin-top:4px">Last sync: <span id="lastSync">never</span></div>
       </div>
       <div class="toolbar">
         <button id="btnExport" class="btn">Export JSON</button>
         <button id="btnClear" class="btn ghost">Clear</button>
       </div>
-    </header><section class="card">
-  <div class="hd"><h2>Filters</h2></div>
-  <div class="bd row cols-3">
-    <input id="q" placeholder="Search title/company/desc… (electrode, NMC, pigging)" />
-    <select id="loc">
-      <option value="any">Any location</option>
-      <option>London</option>
-      <option>Dublin</option>
-      <option>Newcastle</option>
-      <option>North East</option>
-    </select>
-    <select id="src">
-      <option value="any">Any source</option>
-      <option>LinkedIn</option>
-      <option>Indeed</option>
-      <option>WorkInBatteries</option>
-    </select>
-    <label class="pill" style="grid-column:1/-1"><input id="contract" type="checkbox" style="width:auto;height:auto"/> Contract / consulting only</label>
-    <select id="since">
-      <option value="7">Last 7 days</option>
-      <option value="14">Last 14 days</option>
-      <option value="30" selected>Last 30 days</option>
-      <option value="90">Last 90 days</option>
-      <option value="365">Last 365 days</option>
-    </select>
+    </header>
+
+    <section class="card">
+      <div class="hd"><h2>Filters</h2></div>
+      <div class="bd row cols-3">
+        <input id="q" placeholder="Search title/company/desc… (electrode, NMC, pigging)" />
+        <select id="loc">
+          <option value="any">Any location</option>
+          <option>London</option>
+          <option>Dublin</option>
+          <option>Newcastle</option>
+          <option>North East</option>
+        </select>
+        <select id="src">
+          <option value="any">Any source</option>
+          <option>LinkedIn</option>
+          <option>Indeed</option>
+          <option>WorkInBatteries</option>
+        </select>
+        <label class="pill" style="grid-column:1/-1"><input id="contract" type="checkbox" style="width:auto;height:auto"/> Contract / consulting only</label>
+        <select id="since">
+          <option value="7">Last 7 days</option>
+          <option value="14">Last 14 days</option>
+          <option value="30" selected>Last 30 days</option>
+          <option value="90">Last 90 days</option>
+          <option value="365">Last 365 days</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:12px">
+      <div class="hd"><h2>Data input / sync</h2></div>
+      <div class="bd row cols-2">
+        <div class="flex" style="flex:1">
+          <input id="endpoint" placeholder="https://raw.githubusercontent.com/USER/REPO/main/jobs.json" style="flex:1"/>
+          <button id="btnFetch" class="btn" style="min-width:120px">Fetch</button>
+        </div>
+        <div class="flex" style="align-items:center">
+          <label class="muted" style="font-size:13px">Import JSON/CSV</label>
+          <input id="file" type="file" accept=".json,.csv" />
+          <span class="badge">Saved locally</span>
+        </div>
+      </div>
+      <div class="bd" style="padding-top:0">
+        <label class="pill"><input id="autoRefresh" type="checkbox" style="width:auto;height:auto"/> Auto-refresh every 6 hours</label>
+      </div>
+    </section>
+
+    <section class="row cols-2" style="margin-top:12px">
+      <div class="card">
+        <div class="hd"><h2>Overview</h2></div>
+        <div class="bd stats" id="stats"></div>
+      </div>
+      <div class="card">
+        <div class="hd"><h2>Highlights (last 14 days)</h2></div>
+        <div class="bd" id="highlights"></div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:12px">
+      <div class="hd"><h2>Job list</h2></div>
+      <div class="bd" id="list"></div>
+    </section>
+
+    <footer class="muted" style="text-align:center;margin:28px 0">Built for Matt · <span id="year"></span></footer>
   </div>
-</section>
 
-<section class="card" style="margin-top:12px">
-  <div class="hd"><h2>Data input / sync</h2></div>
-  <div class="bd row cols-2">
-    <div class="flex" style="flex:1">
-      <input id="endpoint" placeholder="https://raw.githubusercontent.com/USER/REPO/main/jobs.json" style="flex:1"/>
-      <button id="btnFetch" class="btn" style="min-width:120px">Fetch</button>
-    </div>
-    <div class="flex" style="align-items:center">
-      <label class="muted" style="font-size:13px">Import JSON/CSV</label>
-      <input id="file" type="file" accept=".json,.csv" />
-      <span class="badge">Saved locally</span>
-    </div>
-  </div>
-</section>
-
-<section class="row cols-2" style="margin-top:12px">
-  <div class="card">
-    <div class="hd"><h2>Overview</h2></div>
-    <div class="bd stats" id="stats"></div>
-  </div>
-  <div class="card">
-    <div class="hd"><h2>Highlights (last 14 days)</h2></div>
-    <div class="bd" id="highlights"></div>
-  </div>
-</section>
-
-<section class="card" style="margin-top:12px">
-  <div class="hd"><h2>Job list</h2></div>
-  <div class="bd" id="list"></div>
-</section>
-
-<footer class="muted" style="text-align:center;margin:28px 0">Built for Matt · <span id="year"></span></footer>
-
-  </div><script>
+<script>
 (function(){
   const KEY_DATA = 'matt_jobs_data_v2';
   const KEY_ENDPOINT = 'matt_jobs_endpoint_v2';
+  const KEY_LASTSYNC = 'matt_jobs_last_sync_v1';
+  const KEY_AUTO = 'matt_jobs_auto_refresh_v1';
+  const AUTO_MS = 6*60*60*1000; // 6 hours
+
   /** @type {Array<{id:string,title:string,company:string,location:string,source:string,url:string,posted:string,type?:string,description?:string}>} */
   let jobs = load(KEY_DATA) || [
     {id:'demo-1',title:'Process Engineer – Electrode (NMC)',company:'VoltCell',location:'London, UK',source:'WorkInBatteries',url:'#',posted:new Date().toISOString(),type:'Permanent',description:'Own mixing & coating process; SPC, PFMEA, yield uplift.'},
@@ -136,8 +146,12 @@
   const endpointEl = $('#endpoint');
   const fileEl = $('#file');
   const yearEl = $('#year'); yearEl.textContent = new Date().getFullYear();
+  const lastSyncEl = $('#lastSync');
+  const autoRefreshEl = $('#autoRefresh');
 
   endpointEl.value = load(KEY_ENDPOINT) || '';
+  autoRefreshEl.checked = !!load(KEY_AUTO);
+  updateLastSyncLabel();
 
   function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
   function load(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch{return null}}
@@ -210,6 +224,29 @@
 
   function escapeHtml(s){return String(s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
 
+  // Fetch & merge helper
+  async function fetchAndMerge({silent=false}={}){
+    const url = endpointEl.value.trim(); if(!url) return;
+    save(KEY_ENDPOINT, url);
+    try{
+      const bust = url.includes('?') ? '&' : '?';
+      const res = await fetch(url + bust + 't=' + Date.now(), {cache:'no-store'});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data = await res.json(); if(!Array.isArray(data)) throw new Error('Endpoint must return an array');
+      jobs = uniq([...jobs, ...data], 'id');
+      save(KEY_DATA, jobs);
+      save(KEY_LASTSYNC, Date.now());
+      updateLastSyncLabel();
+      applyFilters();
+      if(!silent) alert('Fetched and merged '+data.length+' records.');
+    }catch(e){ if(!silent) alert('Fetch failed: '+e.message); }
+  }
+
+  function updateLastSyncLabel(){
+    const ts = load(KEY_LASTSYNC); if(!ts){ lastSyncEl.textContent = 'never'; return; }
+    const d = new Date(ts); lastSyncEl.textContent = d.toLocaleString();
+  }
+
   // --- Mobile fix: some browsers fire 'change' (not 'input') on selects/checkboxes ---
   ;['input','change'].forEach(evt=>{
     [qEl,locEl,srcEl,contractEl,sinceEl].forEach(el=> el.addEventListener(evt, applyFilters));
@@ -225,16 +262,7 @@
     if(!confirm('Clear all saved jobs?')) return; jobs = []; save(KEY_DATA,jobs); applyFilters();
   });
 
-  $('#btnFetch').addEventListener('click', async ()=>{
-    const url = endpointEl.value.trim(); if(!url) return alert('Enter an endpoint URL');
-    save(KEY_ENDPOINT, url);
-    try{
-      const res = await fetch(url,{cache:'no-store'}); if(!res.ok) throw new Error('HTTP '+res.status);
-      const data = await res.json(); if(!Array.isArray(data)) throw new Error('Endpoint must return an array');
-      jobs = uniq([...jobs, ...data], 'id'); save(KEY_DATA, jobs); applyFilters();
-      alert('Fetched and merged '+data.length+' records.');
-    }catch(e){alert('Fetch failed: '+e.message)}
-  });
+  $('#btnFetch').addEventListener('click', ()=> fetchAndMerge({silent:false}));
 
   fileEl.addEventListener('change', e=>{
     const f = e.target.files && e.target.files[0]; if(!f) return;
@@ -259,8 +287,25 @@
     }; reader.readAsText(f);
   });
 
+  // Auto-fetch on load if endpoint saved
+  if(endpointEl.value){ fetchAndMerge({silent:true}); }
+
+  // Optional: periodic auto-refresh
+  function scheduleAuto(){
+    const enabled = autoRefreshEl.checked; save(KEY_AUTO, enabled);
+    if(enabled){
+      if(scheduleAuto._timer) clearInterval(scheduleAuto._timer);
+      scheduleAuto._timer = setInterval(()=> fetchAndMerge({silent:true}), AUTO_MS);
+    } else if(scheduleAuto._timer){
+      clearInterval(scheduleAuto._timer); scheduleAuto._timer = null;
+    }
+  }
+  autoRefreshEl.addEventListener('change', scheduleAuto);
+  scheduleAuto(); // start if previously enabled
+
   // Initial render
   applyFilters();
 })();
-</script></body>
+</script>
+</body>
 </html>
