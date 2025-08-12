@@ -3,25 +3,28 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>Matt — Battery & Electrode Job Tracker</title>
   <style>
     :root{--bg:#0b0c0e;--card:#121317;--muted:#9aa0aa;--text:#e8eaed;--accent:#6ee7b7;--line:#23252b}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-    a{color:inherit} .wrap{max-width:1100px;margin:32px auto;padding:0 16px}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;-webkit-text-size-adjust:100%}
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
     .row{display:grid;gap:12px}
     .row.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
     .row.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
     @media (max-width:900px){.row.cols-3,.row.cols-2{grid-template-columns:1fr}}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,.25)}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 4px 24px rgba(0,0,0,.25);overflow:hidden}
     .card h2{margin:0 0 6px 0;font-size:16px}
     .card .hd{padding:14px 16px;border-bottom:1px solid var(--line)}
     .card .bd{padding:16px}
-    .pill{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border-radius:999px;background:#171922;border:1px solid var(--line);color:var(--muted)}
-    input,select,button{height:38px;background:#0f1116;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:0 10px}
+    .pill{display:inline-flex;gap:8px;align-items:center;padding:6px 12px;border-radius:999px;background:#171922;border:1px solid var(--line);color:var(--muted)}
+    input,select,button{height:44px;background:#0f1116;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:0 12px;width:100%}
     input[type=file]{height:auto}
-    button{cursor:pointer}
-    .btn{display:inline-flex;align-items:center;gap:8px;padding:0 12px}
+    button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:0 14px;justify-content:center}
     .btn.ghost{background:transparent;border-color:#2a2d36}
     .stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
     @media (max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}}
@@ -31,19 +34,21 @@
     .job:first-child{border-top:0}
     .job h3{margin:0;font-size:16px}
     .muted{color:var(--muted)}
-    .badge{display:inline-block;border:1px solid var(--line);padding:2px 8px;border-radius:999px;font-size:12px;margin-left:6px;color:var(--muted)}
-    .hl{display:inline-block;background:rgba(110,231,183,.12);border:1px solid rgba(110,231,183,.24);color:#b9f6de;padding:4px 10px;border-radius:999px}
+    .badge{display:inline-block;border:1px solid var(--line);padding:4px 10px;border-radius:999px;font-size:12px;margin-left:6px;color:var(--muted)}
+    .hl{display:inline-block;background:rgba(110,231,183,.12);border:1px solid rgba(110,231,183,.24);color:#b9f6de;padding:6px 12px;border-radius:999px}
     .flex{display:flex;gap:10px;flex-wrap:wrap}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap}
+    @media (max-width:600px){.toolbar>button{flex:1 1 48%}}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header class="flex" style="justify-content:space-between;align-items:center;margin-bottom:14px">
-      <div>
-        <h1 style="margin:0;font-size:22px">Matt — Battery & Electrode Job Tracker</h1>
+    <header class="toolbar" style="justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="flex:1 1 auto;min-width:240px">
+        <h1 style="margin:0 0 6px 0;font-size:22px">Matt — Battery & Electrode Job Tracker</h1>
         <div class="muted" style="font-size:13px">Static single‑file. Import JSON/CSV or point to a JSON endpoint. Saves locally.</div>
       </div>
-      <div class="flex">
+      <div class="toolbar">
         <button id="btnExport" class="btn">Export JSON</button>
         <button id="btnClear" class="btn ghost">Clear</button>
       </div>
@@ -64,7 +69,7 @@
       <option>Indeed</option>
       <option>WorkInBatteries</option>
     </select>
-    <label class="pill"><input id="contract" type="checkbox" /> Contract / consulting only</label>
+    <label class="pill" style="grid-column:1/-1"><input id="contract" type="checkbox" style="width:auto;height:auto"/> Contract / consulting only</label>
     <select id="since">
       <option value="7">Last 7 days</option>
       <option value="14">Last 14 days</option>
@@ -80,7 +85,7 @@
   <div class="bd row cols-2">
     <div class="flex" style="flex:1">
       <input id="endpoint" placeholder="https://raw.githubusercontent.com/USER/REPO/main/jobs.json" style="flex:1"/>
-      <button id="btnFetch" class="btn">Fetch</button>
+      <button id="btnFetch" class="btn" style="min-width:120px">Fetch</button>
     </div>
     <div class="flex" style="align-items:center">
       <label class="muted" style="font-size:13px">Import JSON/CSV</label>
@@ -205,8 +210,10 @@
 
   function escapeHtml(s){return String(s).replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
 
-  // Events
-  ;[qEl,locEl,srcEl,contractEl,sinceEl].forEach(el=> el.addEventListener('input', applyFilters));
+  // --- Mobile fix: some browsers fire 'change' (not 'input') on selects/checkboxes ---
+  ;['input','change'].forEach(evt=>{
+    [qEl,locEl,srcEl,contractEl,sinceEl].forEach(el=> el.addEventListener(evt, applyFilters));
+  });
 
   $('#btnExport').addEventListener('click', ()=>{
     const blob = new Blob([JSON.stringify(jobs,null,2)],{type:'application/json'});
