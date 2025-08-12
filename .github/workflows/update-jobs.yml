@@ -23,3 +23,11 @@ jobs:
             git commit -m "Update jobs.json"
             git push
           fi
+
+      - name: Push jobs to Apify dataset
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+        run: |
+          curl -s -X POST "https://api.apify.com/v2/datasets/hT85CGbB0id7KW07c/items?token=${APIFY_TOKEN}&clean=true" \
+            -H "Content-Type: application/json" \
+            -d @jobs.json
